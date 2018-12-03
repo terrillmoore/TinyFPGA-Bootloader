@@ -52,7 +52,22 @@ module bootloader (
     .SCLK()
   );
 
+  wire led_pwm;
 
+  SB_RGBA_DRV RGB_DRIVER (
+    .RGBLEDEN(1'b1),
+    .RGB0PWM(1'b0),
+    .RGB1PWM(led_pwm),
+    .RGB2PWM(1'b0),
+    .CURREN(1'b1),
+    .RGB0(),
+    .RGB1(pin_led),
+    .RGB2()
+    );
+    defparam RGB_DRIVER.CURRENT_MODE = "0b0";
+    defparam RGB_DRIVER.RGB0_CURRENT = "0b111111";
+    defparam RGB_DRIVER.RGB1_CURRENT = "0b000011";
+    defparam RGB_DRIVER.RGB2_CURRENT = "0b111111";
 
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -63,11 +78,13 @@ module bootloader (
   ////////////////////////////////////////////////////////////////////////////////
   wire boot;
 
+`ifdef NOTYET
   SB_WARMBOOT warmboot_inst (
     .S1(1'b0),
     .S0(1'b1),
     .BOOT(boot)
   );
+`endif
 
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +108,7 @@ module bootloader (
     .usb_p_rx(usb_p_rx),
     .usb_n_rx(usb_n_rx),
     .usb_tx_en(usb_tx_en),
-    .led(pin_led),
+    .led(led_pwm),
     .spi_miso(pin_29_miso),
     .spi_cs(pin_30_cs),
     .spi_mosi(pin_31_mosi),
