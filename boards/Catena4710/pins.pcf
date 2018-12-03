@@ -1,0 +1,13 @@
+# pinout for bootloader on breakout board
+
+set_io pin_clk    44    # IOT_46B_G0
+set_io pin_led    35    # RGB1 (Green)
+
+set_io pin_32_sck 15
+set_io pin_30_cs  16
+set_io pin_31_mosi 14
+set_io pin_29_miso 17
+
+set_io pin_usbp   46    # IOT_39A   B: J2-7
+set_io pin_usbn   45    # IOT_38B   B: J2-9
+set_io pin_pu      2    # IOT_48B   B: J2-8
