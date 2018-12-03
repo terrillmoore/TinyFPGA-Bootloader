@@ -117,11 +117,35 @@ module bootloader (
   );
 
   assign pin_pu = 1'b1;
+/*
   assign pin_usbp = usb_tx_en ? usb_p_tx : 1'bz;
   assign pin_usbn = usb_tx_en ? usb_n_tx : 1'bz;
   assign usb_p_rx = usb_tx_en ? 1'b1 : pin_usbp;
   assign usb_n_rx = usb_tx_en ? 1'b0 : pin_usbn;
+*/
 
-  
+  SB_IO #(
+    .PIN_TYPE(6'b 1010_01), // PIN_OUTPUT_TRISTATE - PIN_INPUT
+    .PULLUP(1'b 0)
+  )
+  iobuf_usbp
+  (
+    .PACKAGE_PIN(pin_usbp),
+    .OUTPUT_ENABLE(usb_tx_en),
+    .D_OUT_0(usb_p_tx),
+    .D_IN_0(usb_p_in)
+  );
+
+  SB_IO #(
+    .PIN_TYPE(6'b 1010_01), // PIN_OUTPUT_TRISTATE - PIN_INPUT
+    .PULLUP(1'b 0)
+  )
+  iobuf_usbn
+  (
+    .PACKAGE_PIN(pin_usbn),
+    .OUTPUT_ENABLE(usb_tx_en),
+    .D_OUT_0(usb_n_tx),
+    .D_IN_0(usb_n_in)
+  );  
   assign reset = 1'b0;
 endmodule
