@@ -78,13 +78,13 @@ module bootloader (
   ////////////////////////////////////////////////////////////////////////////////
   wire boot;
 
-`ifdef NOTYET
+//`ifdef NOTYET
   SB_WARMBOOT warmboot_inst (
     .S1(1'b0),
     .S0(1'b1),
     .BOOT(boot)
   );
-`endif
+//`endif
 
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ module bootloader (
     .PACKAGE_PIN(pin_usbp),
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_p_tx),
-    .D_IN_0(usb_p_in)
+    .D_IN_0(usb_p_rx)
   );
 
   SB_IO #(
@@ -145,7 +145,7 @@ module bootloader (
     .PACKAGE_PIN(pin_usbn),
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_n_tx),
-    .D_IN_0(usb_n_in)
+    .D_IN_0(usb_n_rx)
   );  
   assign reset = 1'b0;
 endmodule
