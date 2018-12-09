@@ -18,7 +18,6 @@ module bootloader (
 
   inout  pin_usbp,
   inout  pin_usbn,
-  output pin_pu,
 
   output pin_led,
 
