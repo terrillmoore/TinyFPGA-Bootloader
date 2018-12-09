@@ -1,7 +1,7 @@
 # pinout for bootloader on breakout board
 
 set_io pin_clk    44    # IOT_46B_G0
-set_io pin_led    35    # RGB1 (Green)
+set_io pin_led    35    #
 
 set_io pin_32_sck 15
 set_io pin_30_cs  16
