@@ -25,7 +25,10 @@ module bootloader (
   input  pin_SPI_SI,
   output pin_SPI_SS,
   output pin_SPI_SO,
-  output pin_SPI_SCK
+  output pin_SPI_SCK,
+
+  inout [6 : 0] pin_gpio //,
+//  inout [32 : 0] wire_D
 );
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -146,4 +149,15 @@ module bootloader (
     .D_IN_0(usb_n_rx)
   );  
   assign reset = 1'b0;
+
+/* other things for us */
+  assign pin_gpio[0] = 1'bZ;	//
+  assign pin_gpio[1] = 1'bZ;	//
+  assign pin_gpio[2] = 1'bZ;	//
+  assign pin_gpio[3] = 1'bZ;	//
+  assign pin_gpio[4] = 1'bZ;	//
+  assign pin_gpio[5] = 1'b0;	// turn off external voltages
+  assign pin_gpio[6] = 1'b0;	// turn off external voltages
+//  assign wire_D[28] = 1'b0;	// drive SCK_MIC low
+//  assign wire_D[32] = 1'b1;	// turn on 12 MHz clock
 endmodule
