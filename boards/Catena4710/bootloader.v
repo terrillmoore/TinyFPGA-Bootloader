@@ -57,8 +57,8 @@ module bootloader (
   ) usb_pll_inst (
     .REFERENCECLK(pin_clk12),
     //.PACKAGEPIN(pin_clk12),
-    .PLLOUTCORE(clk_48mhz),
-    .PLLOUTGLOBAL(),
+    .PLLOUTCORE(),
+    .PLLOUTGLOBAL(clk_48mhz),
     .EXTFEEDBACK(),
     .DYNAMICDELAY(),
     .RESETB(1'b1),
