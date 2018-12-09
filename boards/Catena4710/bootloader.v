@@ -146,7 +146,7 @@ module bootloader (
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_n_tx),
     .D_IN_0(usb_n_rx)
-  );  
+  );
   assign reset = 1'b0;
 
   //================================================================================
@@ -258,5 +258,18 @@ module bootloader (
         .DIN0 (),
         .DIN1 ()
         );
-    assign wire_D[32] = 1'b1;           // 48 MHz enable: on
+
+//  assign wire_D[32] = 1'b1;           // 48 MHz enable: on
+    SB_IO #(
+      .PIN_TYPE( {IOB_PIN_OUTPUT, IOB_PIN_INPUT} ),
+      .PULLUP(1'b1)
+    )
+    iobuf_wire_D32_inst
+    (
+      .PACKAGE_PIN(wire_D[32]),
+      .OUTPUT_ENABLE(),
+      .D_OUT_0(1'b1),
+      .D_IN_0()
+    );
+
 endmodule
