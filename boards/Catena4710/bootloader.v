@@ -21,8 +21,8 @@ module bootloader (
   ////////////////////////////////////////////////////////////////////////////////
   wire clk_48mhz;
 
-  //SB_PLL40_CORE #(
-  SB_PLL40_PAD #(
+  SB_PLL40_CORE #(
+  //SB_PLL40_PAD #(
     .DIVR(4'b0000),
     //.DIVF(7'b0101111),
     .DIVF(7'b0111111),
@@ -37,8 +37,8 @@ module bootloader (
     .PLLOUT_SELECT("GENCLK"),
     .ENABLE_ICEGATE(1'b0)
   ) usb_pll_inst (
-    //.REFERENCECLK(pin_clk),
-    .PACKAGEPIN(pin_clk),
+    .REFERENCECLK(pin_clk),
+    //.PACKAGEPIN(pin_clk),
     .PLLOUTCORE(clk_48mhz),
     .PLLOUTGLOBAL(),
     .EXTFEEDBACK(),
