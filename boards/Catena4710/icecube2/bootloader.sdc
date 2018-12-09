@@ -12,5 +12,5 @@
 create_clock  -period 83.33 -name {pin_clk12} [get_ports {pin_clk12}] 
 
 ####---- CreateGenClock list ----1
-create_generated_clock  [get_ports {usb_pll_inst/PLLOUTCORE}]  -source [get_ports {pin_clk12}]  -multiply_by 4.00 -name {clk48
+create_generated_clock  [get_ports {usb_pll_inst/PLLOUTGLOBAL}]  -source [get_ports {pin_clk12}]  -multiply_by 4.00 -name {clk48
 
