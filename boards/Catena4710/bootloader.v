@@ -108,7 +108,7 @@ module bootloader (
     .usb_p_rx(usb_p_rx),
     .usb_n_rx(usb_n_rx),
     .usb_tx_en(usb_tx_en),
-    .led(pin_led),
+    .led(/* pin_led */),
     .spi_miso(pin_SPI_SI),
     .spi_cs(pin_SPI_SS),
     .spi_mosi(pin_SPI_SO),
@@ -117,6 +117,7 @@ module bootloader (
   );
 
   assign pin_pu = 1'b1;
+  assign pin_led = 1'b1;
 /*
   assign pin_usbp = usb_tx_en ? usb_p_tx : 1'bz;
   assign pin_usbn = usb_tx_en ? usb_n_tx : 1'bz;
