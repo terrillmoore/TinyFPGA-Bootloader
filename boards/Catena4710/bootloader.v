@@ -1,5 +1,20 @@
+/*
+
+Module:	bootloader.v
+
+Function:
+	USB bootloader top-level for MCCI Catena 4710
+
+Copyright:
+	See accompanying license file
+
+Author:
+	Adapted from TinyFPGA original by Terry Moore, MCCI
+
+*/
+
 module bootloader (
-  input  pin_clk,
+  input  pin_clk12,
 
   inout  pin_usbp,
   inout  pin_usbn,
@@ -7,10 +22,10 @@ module bootloader (
 
   output pin_led,
 
-  input  pin_29_miso,
-  output pin_30_cs,
-  output pin_31_mosi,
-  output pin_32_sck
+  input  pin_SPI_SI,
+  output pin_SPI_SS,
+  output pin_SPI_SO,
+  output pin_SPI_SCK
 );
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -37,8 +52,8 @@ module bootloader (
     .PLLOUT_SELECT("GENCLK"),
     .ENABLE_ICEGATE(1'b0)
   ) usb_pll_inst (
-    .REFERENCECLK(pin_clk),
-    //.PACKAGEPIN(pin_clk),
+    .REFERENCECLK(pin_clk12),
+    //.PACKAGEPIN(pin_clk12),
     .PLLOUTCORE(clk_48mhz),
     .PLLOUTGLOBAL(),
     .EXTFEEDBACK(),
@@ -92,10 +107,10 @@ module bootloader (
     .usb_n_rx(usb_n_rx),
     .usb_tx_en(usb_tx_en),
     .led(pin_led),
-    .spi_miso(pin_29_miso),
-    .spi_cs(pin_30_cs),
-    .spi_mosi(pin_31_mosi),
-    .spi_sck(pin_32_sck),
+    .spi_miso(pin_SPI_SI),
+    .spi_cs(pin_SPI_SS),
+    .spi_mosi(pin_SPI_SO),
+    .spi_sck(pin_SPI_SCK),
     .boot(boot)
   );
 
