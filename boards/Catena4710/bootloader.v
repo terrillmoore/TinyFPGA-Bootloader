@@ -27,8 +27,8 @@ module bootloader (
   output pin_SPI_SO,
   output pin_SPI_SCK,
 
-  inout [6 : 0] pin_gpio //,
-//  inout [32 : 0] wire_D
+  inout [6 : 0] pin_gpio,
+  inout [32 : 0] wire_D
 );
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +150,28 @@ module bootloader (
   );  
   assign reset = 1'b0;
 
+  //================================================================================
+  // defaults for the various pins
+  //================================================================================
+  localparam IOB_PIN_INPUT                                      = 2'b01;
+  localparam IOB_PIN_INPUT_LATCH                                = 2'b11;
+  localparam IOB_PIN_INPUT_REGISTERED                           = 2'b00;
+  localparam IOB_PIN_INPUT_DDR                                  = IOB_PIN_INPUT_REGISTERED;
+  localparam IOB_PIN_INPUT_REGISTERED_LATCH                     = 2'b01;
+
+  localparam IOB_PIN_OUTPUT_NONE                                = 4'b0000;
+  localparam IOB_PIN_OUTPUT                                     = 4'b0110;
+  localparam IOB_PIN_OUTPUT_TRISTATE                            = 4'b1010;
+  localparam IOB_PIN_OUTPUT_ENABLE_REGISTERED                   = 4'b1110;
+  localparam IOB_PIN_OUTPUT_REGISTERED                          = 4'b0101;
+  localparam IOB_PIN_OUTPUT_REGISTERED_ENABLE                   = 4'b1001;
+  localparam IOB_PIN_OUTPUT_REGISTERED_ENABLE_REGISTERED        = 4'b1101;
+  localparam IOB_PIN_OUTPUT_DDR                                 = 4'b0100;
+  localparam IOB_PIN_OUTPUT_DDR_ENABLE                          = 4'b1000;
+  localparam IOB_PIN_OUTPUT_DDR_ENABLE_REGISTERED               = 4'b1100;
+  localparam IOB_PIN_OUTPUT_REGISTERED_INVERTED                 = 4'b1011;
+  localparam IOB_PIN_OUTPUT_REGISTERED_EABLE_REGISTERED_INVERTED = 4'b1111;
+
 /* other things for us */
   assign pin_gpio[0] = 1'bZ;	//
   assign pin_gpio[1] = 1'bZ;	//
@@ -158,6 +180,84 @@ module bootloader (
   assign pin_gpio[4] = 1'bZ;	//
   assign pin_gpio[5] = 1'b0;	// turn off external voltages
   assign pin_gpio[6] = 1'b0;	// turn off external voltages
-//  assign wire_D[28] = 1'b0;	// drive SCK_MIC low
-//  assign wire_D[32] = 1'b1;	// turn on 12 MHz clock
+
+/* the wires */
+    assign wire_D[ 0] = 1'bZ;
+    assign wire_D[ 1] = 1'bZ;
+    assign wire_D[ 2] = 1'bZ;
+    assign wire_D[ 3] = 1'bZ;
+    assign wire_D[ 4] = 1'bZ;
+    assign wire_D[ 5] = 1'bZ;
+    assign wire_D[ 6] = 1'bZ;
+    assign wire_D[ 7] = 1'bZ;
+    assign wire_D[ 8] = 1'bZ;
+    assign wire_D[ 9] = 1'bZ;
+    assign wire_D[10] = 1'bZ;
+    assign wire_D[11] = 1'bZ;
+    assign wire_D[12] = 1'bZ;
+    assign wire_D[13] = 1'bZ;           // not used; pin_led controls directly
+    assign wire_D[14] = 1'bZ;
+    assign wire_D[15] = 1'bZ;
+    assign wire_D[16] = 1'bZ;
+    assign wire_D[17] = 1'bZ;
+    assign wire_D[18] = 1'bZ;
+    assign wire_D[19] = 1'bZ;
+    assign wire_D[20] = 1'bZ;
+    assign wire_D[21] = 1'bZ;
+    assign wire_D[22] = 1'bZ;
+    assign wire_D[23] = 1'bZ;
+    assign wire_D[24] = 1'bZ;
+    assign wire_D[25] = 1'bZ;
+//  assign wire_D[26] = 1'bZ;
+    SB_IO_OD #(
+        .PIN_TYPE ( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
+        )
+    pad_rgb2(
+        .PACKAGEPIN (wire_D[26]),
+        .OUTPUTENABLE (),
+        .LATCHINPUTVALUE (),
+        .CLOCKENABLE (),
+        .INPUTCLK (),
+        .OUTPUTCLK (),
+        .DOUT0 (),
+        .DOUT1 (),
+        .DIN0 (),
+        .DIN1 ()
+        );
+    assign wire_D[27] = 1'bZ;
+    assign wire_D[28] = 1'b0;           // D29_SCK_MIC
+    assign wire_D[29] = 1'bZ;
+//  assign wire_D[30] = 1'bZ;
+    SB_IO_OD #(
+        .PIN_TYPE ( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
+        )
+    pad_rgb0(
+        .PACKAGEPIN (wire_D[30]),
+        .OUTPUTENABLE (),
+        .LATCHINPUTVALUE (),
+        .CLOCKENABLE (),
+        .INPUTCLK (),
+        .OUTPUTCLK (),
+        .DOUT0 (),
+        .DOUT1 (),
+        .DIN0 (),
+        .DIN1 ()
+        );
+//  assign wire_D[31] = 1'bZ;
+    SB_IO_OD #(
+        .PIN_TYPE ( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
+        )
+    pad_rgb1(
+        .PACKAGEPIN (wire_D[31]),
+        .OUTPUTENABLE (),
+        .LATCHINPUTVALUE (),
+        .CLOCKENABLE (),
+        .INPUTCLK (),
+        .OUTPUTCLK (),
+        .DOUT0 (),
+        .DOUT1 (),
+        .DIN0 (),
+        .DIN1 ()
+        );
+    assign wire_D[32] = 1'b1;           // 48 MHz enable: on
 endmodule
