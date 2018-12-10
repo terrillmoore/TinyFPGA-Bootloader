@@ -80,7 +80,7 @@ module bootloader (
   wire clk_48mhz;
   wire clk_12MHz;
 
-  SB_GB_IO #(
+  SB_IO #(
     .PIN_TYPE( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
   ) pad_clk12_inst (
     .PACKAGE_PIN(pin_clk12),
