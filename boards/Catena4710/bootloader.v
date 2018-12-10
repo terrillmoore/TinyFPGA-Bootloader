@@ -136,6 +136,17 @@ module bootloader (
   );
 `endif
 
+  //// test things
+  reg test1 = 0;
+  reg test2 = 0;
+
+  always @(posedge clk_hfosc)
+    test1 <= ~test1;
+
+  always @(posedge clk_12MHz)
+    test2 <= ~test2;
+
+
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
   ////////
@@ -219,8 +230,8 @@ module bootloader (
     assign wire_D[ 7] = 1'bZ;
     assign wire_D[ 8] = 1'bZ;
     assign wire_D[ 9] = 1'bZ;
-    assign wire_D[10] = 1'bZ;
-    assign wire_D[11] = 1'bZ;
+    assign wire_D[10] = test1;
+    assign wire_D[11] = test2;
     assign wire_D[12] = 1'bZ;
     assign wire_D[13] = 1'bZ;           // not used; pin_led controls directly
     assign wire_D[14] = 1'bZ;
