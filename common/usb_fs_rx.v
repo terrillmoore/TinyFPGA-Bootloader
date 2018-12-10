@@ -150,18 +150,18 @@ module usb_fs_rx (
     if (line_state_valid) begin
       // check for packet start: KJKJKK
       if (!packet_valid && line_history[5:0] == 6'b100101) begin
-        next_packet_valid <= 1;
+        next_packet_valid = 1;
       end
  
       // check for packet end: SE0 SE0
       else if (packet_valid && line_history[3:0] == 4'b0000) begin
-        next_packet_valid <= 0;
+        next_packet_valid = 0;
 
       end else begin
-        next_packet_valid <= packet_valid;
+        next_packet_valid = packet_valid;
       end
     end else begin
-      next_packet_valid <= packet_valid;
+      next_packet_valid = packet_valid;
     end
   end
 
