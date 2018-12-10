@@ -29,6 +29,38 @@ module bootloader (
   inout [6 : 0] pin_gpio,
   inout [32 : 0] wire_D
 );
+  //================================================================================
+  // defaults for the various pins
+  //================================================================================
+  localparam IOB_PIN_INPUT                                      = 2'b01;
+  localparam IOB_PIN_INPUT_LATCH                                = 2'b11;
+  localparam IOB_PIN_INPUT_REGISTERED                           = 2'b00;
+  localparam IOB_PIN_INPUT_DDR                                  = IOB_PIN_INPUT_REGISTERED;
+  localparam IOB_PIN_INPUT_REGISTERED_LATCH                     = 2'b01;
+
+  localparam IOB_PIN_OUTPUT_NONE                                = 4'b0000;
+  localparam IOB_PIN_OUTPUT                                     = 4'b0110;
+  localparam IOB_PIN_OUTPUT_TRISTATE                            = 4'b1010;
+  localparam IOB_PIN_OUTPUT_ENABLE_REGISTERED                   = 4'b1110;
+  localparam IOB_PIN_OUTPUT_REGISTERED                          = 4'b0101;
+  localparam IOB_PIN_OUTPUT_REGISTERED_ENABLE                   = 4'b1001;
+  localparam IOB_PIN_OUTPUT_REGISTERED_ENABLE_REGISTERED        = 4'b1101;
+  localparam IOB_PIN_OUTPUT_DDR                                 = 4'b0100;
+  localparam IOB_PIN_OUTPUT_DDR_ENABLE                          = 4'b1000;
+  localparam IOB_PIN_OUTPUT_DDR_ENABLE_REGISTERED               = 4'b1100;
+  localparam IOB_PIN_OUTPUT_REGISTERED_INVERTED                 = 4'b1011;
+  localparam IOB_PIN_OUTPUT_REGISTERED_EABLE_REGISTERED_INVERTED = 4'b1111;
+
+  localparam  OSC_48MHZ = 48000000,
+              OSC_24MHZ = 24000000,
+              OSC_12MHZ = 12000000,
+              OSC_06MHZ =  6000000;
+  localparam  OSC_SPEED = OSC_12MHZ; // OSC clock speed; SET HERE
+  localparam  OSC_STR   = OSC_SPEED == OSC_48MHZ ? "0b00" :
+                          OSC_SPEED == OSC_24MHZ ? "0b01" :
+                          OSC_SPEED == OSC_12MHZ ? "0b10" : "0b11";
+
+
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
   ////////
@@ -36,7 +68,24 @@ module bootloader (
   ////////
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
+
+  wire clk_hfosc;
+  SB_HFOSC #(.CLKHF_DIV(OSC_STR))
+  OSCInst0(
+      .CLKHFEN(1'b1 ),
+      .CLKHFPU(1'b1 ),
+      .CLKHF  (clk_hfosc)
+  ) /* synthesis ROUTE_THROUGH_FABRIC= 1 */;
+
   wire clk_48mhz;
+  wire clk_12MHz;
+
+  SB_IO #(
+    .PIN_TYPE( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
+  ) pad_clk12_inst (
+    .PACKAGE_PIN(pin_clk12),
+    .D_IN_0(clk_12MHz)
+  );
 
   SB_PLL40_CORE #(
   //SB_PLL40_PAD #(
@@ -54,7 +103,7 @@ module bootloader (
     .PLLOUT_SELECT("GENCLK"),
     .ENABLE_ICEGATE(1'b0)
   ) usb_pll_inst (
-    .REFERENCECLK(pin_clk12),
+    .REFERENCECLK(clk_hfosc),
     //.PACKAGEPIN(pin_clk12),
     .PLLOUTCORE(),
     .PLLOUTGLOBAL(clk_48mhz),
@@ -148,28 +197,6 @@ module bootloader (
     .D_IN_0(usb_n_rx)
   );
   assign reset = 1'b0;
-
-  //================================================================================
-  // defaults for the various pins
-  //================================================================================
-  localparam IOB_PIN_INPUT                                      = 2'b01;
-  localparam IOB_PIN_INPUT_LATCH                                = 2'b11;
-  localparam IOB_PIN_INPUT_REGISTERED                           = 2'b00;
-  localparam IOB_PIN_INPUT_DDR                                  = IOB_PIN_INPUT_REGISTERED;
-  localparam IOB_PIN_INPUT_REGISTERED_LATCH                     = 2'b01;
-
-  localparam IOB_PIN_OUTPUT_NONE                                = 4'b0000;
-  localparam IOB_PIN_OUTPUT                                     = 4'b0110;
-  localparam IOB_PIN_OUTPUT_TRISTATE                            = 4'b1010;
-  localparam IOB_PIN_OUTPUT_ENABLE_REGISTERED                   = 4'b1110;
-  localparam IOB_PIN_OUTPUT_REGISTERED                          = 4'b0101;
-  localparam IOB_PIN_OUTPUT_REGISTERED_ENABLE                   = 4'b1001;
-  localparam IOB_PIN_OUTPUT_REGISTERED_ENABLE_REGISTERED        = 4'b1101;
-  localparam IOB_PIN_OUTPUT_DDR                                 = 4'b0100;
-  localparam IOB_PIN_OUTPUT_DDR_ENABLE                          = 4'b1000;
-  localparam IOB_PIN_OUTPUT_DDR_ENABLE_REGISTERED               = 4'b1100;
-  localparam IOB_PIN_OUTPUT_REGISTERED_INVERTED                 = 4'b1011;
-  localparam IOB_PIN_OUTPUT_REGISTERED_EABLE_REGISTERED_INVERTED = 4'b1111;
 
 /* other things for us */
   assign pin_gpio[0] = 1'bZ;	//

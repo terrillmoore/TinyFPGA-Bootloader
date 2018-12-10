@@ -10,6 +10,7 @@
 
 ####---- CreateClock list ----1
 create_clock  -period 83.33 -name {pin_clk12} [get_ports {pin_clk12}] 
+create_clock  -period 83.33 -name {clk_hfosc} [get_nets clk_hfosc] 
 
 ####---- CreateGenClock list ----1
 create_generated_clock  [get_ports {usb_pll_inst/PLLOUTGLOBAL}]  -source [get_ports {pin_clk12}]  -multiply_by 4.00 -name {clk48}
