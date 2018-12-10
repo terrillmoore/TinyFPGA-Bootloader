@@ -63,11 +63,13 @@ module bootloader (
   ////////////////////////////////////////////////////////////////////////////////
   wire boot;
 
+`ifdef NOTYET
   SB_WARMBOOT warmboot_inst (
     .S1(1'b0),
     .S0(1'b1),
     .BOOT(boot)
   );
+`endif
 
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +107,6 @@ module bootloader (
   assign usb_p_rx = usb_tx_en ? 1'b1 : pin_usbp;
   assign usb_n_rx = usb_tx_en ? 1'b0 : pin_usbn;
 
-  
+
   assign reset = 1'b0;
 endmodule
