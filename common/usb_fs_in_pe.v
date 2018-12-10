@@ -277,68 +277,68 @@ module usb_fs_in_pe #(
   reg rollback_in_xfr;
 
   always @* begin
-    in_xfr_start <= 0;
-    in_xfr_end <= 0;
-    tx_pkt_start <= 0;
-    rollback_in_xfr <= 0;
+    in_xfr_start = 0;
+    in_xfr_end = 0;
+    tx_pkt_start = 0;
+    rollback_in_xfr = 0;
 
     case (in_xfr_state)
       IDLE : begin
-        rollback_in_xfr <= 1;
+        rollback_in_xfr = 1;
 
         if (in_token_received) begin
-          in_xfr_state_next <= RCVD_IN;
+          in_xfr_state_next = RCVD_IN;
 
         end else begin
-          in_xfr_state_next <= IDLE;
+          in_xfr_state_next = IDLE;
         end 
       end
 
 
       RCVD_IN : begin
-        tx_pkt_start <= 1;
+        tx_pkt_start = 1;
 
         if (ep_state[current_endp] == STALL) begin
-          in_xfr_state_next <= IDLE;
-          tx_pid <= 4'b1110; // STALL
+          in_xfr_state_next = IDLE;
+          tx_pid = 4'b1110; // STALL
 
         end else if (ep_state[current_endp] == GETTING_PKT) begin
-          in_xfr_state_next <= SEND_DATA;
-          tx_pid <= {data_toggle[current_endp], 3'b011}; // DATA0/1
-          in_xfr_start <= 1;
+          in_xfr_state_next = SEND_DATA;
+          tx_pid = {data_toggle[current_endp], 3'b011}; // DATA0/1
+          in_xfr_start = 1;
 
         end else begin
-          in_xfr_state_next <= IDLE;
-          tx_pid <= 4'b1010; // NAK
+          in_xfr_state_next = IDLE;
+          tx_pid = 4'b1010; // NAK
         end
       end
 
 
       SEND_DATA : begin
         if (!more_data_to_send) begin
-          in_xfr_state_next <= WAIT_ACK;
+          in_xfr_state_next = WAIT_ACK;
 
         end else begin
-          in_xfr_state_next <= SEND_DATA;
+          in_xfr_state_next = SEND_DATA;
         end
       end
 
       WAIT_ACK : begin
         // FIXME: need to handle smash/timeout
         if (ack_received) begin
-          in_xfr_state_next <= IDLE;
-          in_xfr_end <= 1;
+          in_xfr_state_next = IDLE;
+          in_xfr_end = 1;
 
         end else if (in_token_received) begin
-          in_xfr_state_next <= RCVD_IN;
-          rollback_in_xfr <= 1;
+          in_xfr_state_next = RCVD_IN;
+          rollback_in_xfr = 1;
 
         end else if (rx_pkt_end) begin
-          in_xfr_state_next <= IDLE;
-          rollback_in_xfr <= 1;
+          in_xfr_state_next = IDLE;
+          rollback_in_xfr = 1;
 
         end else begin
-          in_xfr_state_next <= WAIT_ACK;
+          in_xfr_state_next = WAIT_ACK;
         end
       end
     endcase
