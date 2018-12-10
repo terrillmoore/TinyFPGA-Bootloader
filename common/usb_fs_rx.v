@@ -192,23 +192,23 @@ module usb_fs_rx (
 
   always @* begin
     case (line_history[3:0])
-      4'b0101 : din <= 1;
-      4'b0110 : din <= 0;
-      4'b1001 : din <= 0;
-      4'b1010 : din <= 1;
-      default : din <= 0;
+      4'b0101 : din = 1;
+      4'b0110 : din = 0;
+      4'b1001 : din = 0;
+      4'b1010 : din = 1;
+      default : din = 0;
     endcase
  
     if (packet_valid && line_state_valid) begin
       case (line_history[3:0])
-        4'b0101 : dvalid_raw <= 1;
-        4'b0110 : dvalid_raw <= 1;
-        4'b1001 : dvalid_raw <= 1;
-        4'b1010 : dvalid_raw <= 1;
-        default : dvalid_raw <= 0;
+        4'b0101 : dvalid_raw = 1;
+        4'b0110 : dvalid_raw = 1;
+        4'b1001 : dvalid_raw = 1;
+        4'b1010 : dvalid_raw = 1;
+        default : dvalid_raw = 0;
       endcase
     end else begin
-      dvalid_raw <= 0;
+      dvalid_raw = 0;
     end
   end
 
