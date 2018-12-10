@@ -25,6 +25,12 @@ all: $(PROJ).rpt multiboot.bin
 %.blif: %.v ../../common/*.v 
 	yosys -p 'synth_ice40 -top $(PROJ) -blif $@' $^
 
+%.json: %.v ../../common/*.v 
+	yosys -p 'synth_ice40 -top $(PROJ) -json $@' $^
+
+%-nextpnr.asc: $(PIN_DEF) %.json
+	nextpnr-ice40 --$(DEVICE) --package $(PKG) --pcf $(PIN_DEF) --json $(PROJ).json --asc $@ $(NEXTPNR_USER_FLAGS)
+
 %.asc: $(PIN_DEF) %.blif
 	arachne-pnr -d 5k -P $(PKG) -o $@ -p $^
 
