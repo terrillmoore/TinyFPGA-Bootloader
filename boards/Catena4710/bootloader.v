@@ -80,11 +80,12 @@ module bootloader (
   wire clk_48mhz;
   wire clk_12MHz;
 
-  SB_IO #(
+  SB_GB_IO #(
     .PIN_TYPE( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
   ) pad_clk12_inst (
     .PACKAGE_PIN(pin_clk12),
     .D_IN_0(clk_12MHz)
+    //.GLOBAL_BUFFER_OUTPUT(clk_12MHz)
   );
 
   SB_PLL40_CORE #(
@@ -103,7 +104,7 @@ module bootloader (
     .PLLOUT_SELECT("GENCLK"),
     .ENABLE_ICEGATE(1'b0)
   ) usb_pll_inst (
-    .REFERENCECLK(clk_hfosc),
+    .REFERENCECLK(clk_12MHz),
     //.PACKAGEPIN(pin_clk12),
     .PLLOUTCORE(),
     .PLLOUTGLOBAL(clk_48mhz),
