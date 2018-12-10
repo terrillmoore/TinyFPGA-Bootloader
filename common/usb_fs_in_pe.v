@@ -286,6 +286,7 @@ module usb_fs_in_pe #(
 
     case (in_xfr_state)
       IDLE : begin
+        tx_pid <= 4'b0000;
         rollback_in_xfr = 1;
 
         if (in_token_received) begin
@@ -317,6 +318,7 @@ module usb_fs_in_pe #(
 
 
       SEND_DATA : begin
+        tx_pid <= 4'b0000;
         if (!more_data_to_send) begin
           in_xfr_state_next = WAIT_ACK;
 
@@ -326,6 +328,7 @@ module usb_fs_in_pe #(
       end
 
       WAIT_ACK : begin
+        tx_pid <= 4'b0000;
         // FIXME: need to handle smash/timeout
         if (ack_received) begin
           in_xfr_state_next = IDLE;
