@@ -164,15 +164,15 @@ module usb_fs_in_pe #(
   generate
     for (ep_num = 0; ep_num < NUM_IN_EPS; ep_num = ep_num + 1) begin
       always @* begin
-        in_ep_acked[ep_num] <= 0;
+        in_ep_acked[ep_num] = 0;
 
         if (in_ep_stall[ep_num]) begin
-          ep_state_next[ep_num] <= STALL;
+          ep_state_next[ep_num] = STALL;
 
         end else begin
           case (ep_state[ep_num])
             READY_FOR_PKT : begin
-              ep_state_next[ep_num] <= PUTTING_PKT;
+              ep_state_next[ep_num] = PUTTING_PKT;
             end
 
             PUTTING_PKT : begin
@@ -183,34 +183,34 @@ module usb_fs_in_pe #(
                   ep_put_addr[ep_num][5]
                 )
               ) begin
-                ep_state_next[ep_num] <= GETTING_PKT;
+                ep_state_next[ep_num] = GETTING_PKT;
 
               end else begin
-                ep_state_next[ep_num] <= PUTTING_PKT;
+                ep_state_next[ep_num] = PUTTING_PKT;
               end
             end
 
             GETTING_PKT : begin
               if (in_xfr_end && current_endp == ep_num) begin
-                ep_state_next[ep_num] <= READY_FOR_PKT;
-                in_ep_acked[ep_num] <= 1;
+                ep_state_next[ep_num] = READY_FOR_PKT;
+                in_ep_acked[ep_num] = 1;
                 
               end else begin
-                ep_state_next[ep_num] <= GETTING_PKT;
+                ep_state_next[ep_num] = GETTING_PKT;
               end
             end
 
             STALL : begin
               if (setup_token_received && rx_endp == ep_num) begin
-                ep_state_next[ep_num] <= READY_FOR_PKT;
+                ep_state_next[ep_num] = READY_FOR_PKT;
 
               end else begin
-                ep_state_next[ep_num] <= STALL;
+                ep_state_next[ep_num] = STALL;
               end
             end
 
             default begin
-              ep_state_next[ep_num] <= READY_FOR_PKT;
+              ep_state_next[ep_num] = READY_FOR_PKT;
             end
           endcase
         end
