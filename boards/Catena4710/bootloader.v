@@ -307,7 +307,7 @@ module bootloader (
     (
       .PACKAGE_PIN(wire_D[32]),
       .OUTPUT_ENABLE(),
-      .D_OUT_0(1'b0),
+      .D_OUT_0(1'b1),
       .D_IN_0()
     );
 
