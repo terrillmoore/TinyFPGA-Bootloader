@@ -79,6 +79,7 @@ module bootloader (
 
   wire clk_48mhz;
   wire clk_12MHz;
+  wire clk_12MHz_effective;
 
   SB_IO #(
     .PIN_TYPE( {IOB_PIN_OUTPUT_NONE, IOB_PIN_INPUT} )
@@ -87,6 +88,13 @@ module bootloader (
     .D_IN_0(clk_12MHz)
     //.GLOBAL_BUFFER_OUTPUT(clk_12MHz)
   );
+
+`define EXTCLOCK
+`ifdef EXTCLOCK
+  assign clk_12MHz_effective = clk_12MHz;
+`else
+  assign clk_12MHz_effective = clk_hfosc;
+`endif
 
   SB_PLL40_CORE #(
   //SB_PLL40_PAD #(
@@ -104,7 +112,7 @@ module bootloader (
     .PLLOUT_SELECT("GENCLK"),
     .ENABLE_ICEGATE(1'b0)
   ) usb_pll_inst (
-    .REFERENCECLK(clk_12MHz),
+    .REFERENCECLK(clk_12MHz_effective),
     //.PACKAGEPIN(pin_clk12),
     .PLLOUTCORE(),
     .PLLOUTGLOBAL(clk_48mhz),
@@ -186,24 +194,26 @@ module bootloader (
 */
 
   SB_IO #(
-    .PIN_TYPE(6'b 1010_01), // PIN_OUTPUT_TRISTATE - PIN_INPUT
+    .PIN_TYPE( { IOB_PIN_OUTPUT_TRISTATE, IOB_PIN_INPUT_REGISTERED } ),
     .PULLUP(1'b 0)
   )
   iobuf_usbp
   (
     .PACKAGE_PIN(pin_usbp),
+    .INPUT_CLK(clk_48mhz),
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_p_tx),
     .D_IN_0(usb_p_rx)
   );
 
   SB_IO #(
-    .PIN_TYPE(6'b 1010_01), // PIN_OUTPUT_TRISTATE - PIN_INPUT
+    .PIN_TYPE( { IOB_PIN_OUTPUT_TRISTATE, IOB_PIN_INPUT_REGISTERED } ),
     .PULLUP(1'b 0)
   )
   iobuf_usbn
   (
     .PACKAGE_PIN(pin_usbn),
+    .INPUT_CLK(clk_48mhz),
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_n_tx),
     .D_IN_0(usb_n_rx)
