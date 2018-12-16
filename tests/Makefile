@@ -1,6 +1,6 @@
 TOPTARGETS := all clean
 
-SUBDIRS := $(wildcard */.)
+SUBDIRS := $(sort $(wildcard */.))
 
 $(TOPTARGETS): $(SUBDIRS)
 $(SUBDIRS):
