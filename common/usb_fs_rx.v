@@ -6,6 +6,7 @@ module usb_fs_rx (
   // USB data+ and data- lines.
   input dp,
   input dn,
+  input usb_tx_en,	// don't try to lock to self
 
   // pulse on every bit transition.
   output bit_strobe,
@@ -124,7 +125,7 @@ module usb_fs_rx (
 
   always @(posedge clk) begin
       // keep track of phase within each bit
-      if (line_state == DT) begin
+      if (~usb_tx_en && line_state == DT) begin
           bit_phase <= 0;
 
       end else begin

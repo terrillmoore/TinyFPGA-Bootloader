@@ -191,6 +191,7 @@ module usb_fs_pe #(
     .reset(reset),
     .dp(usb_p_rx),
     .dn(usb_n_rx),
+    .usb_tx_en(usb_tx_en),
     .bit_strobe(bit_strobe),
     .pkt_start(rx_pkt_start),
     .pkt_end(rx_pkt_end),
