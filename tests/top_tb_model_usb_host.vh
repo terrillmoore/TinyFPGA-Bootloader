@@ -29,7 +29,6 @@
     task usb_host_tx_disable;
     begin
       usb_host_tx_en <= 1'b0;
-      #83328;
     end
     endtask
 
