@@ -53,8 +53,8 @@ module top_tb;
     assign usb_n_top = usb_tx_en ? usb_n_tx_raw : 1'bz;
     wire usb_p_rx;
     wire usb_n_rx;
-    assign usb_p_rx = usb_p_top;
-    assign usb_n_rx = usb_n_top;
+    assign usb_p_rx = usb_tx_en ? 1'b1 : usb_p_top;
+    assign usb_n_rx = usb_tx_en ? 1'b0 : usb_n_top;
 
     // usb interface to host
     reg usb_host_p_tx = 1'b1;
@@ -63,8 +63,8 @@ module top_tb;
     wire usb_host_p_rx;
     wire usb_host_n_rx;
 
-    assign usb_host_p_rx = usb_p_top;
-    assign usb_host_n_rx = usb_n_top;
+    assign usb_host_p_rx = usb_host_tx_en ? 1'b1 : usb_p_top;
+    assign usb_host_n_rx = usb_host_tx_en ? 1'b0 : usb_n_top;
 
     assign usb_p_top = usb_host_tx_en ?  usb_host_p_tx : 1'bz;
     assign usb_n_top = usb_host_tx_en ?  usb_host_n_tx : 1'bz;
