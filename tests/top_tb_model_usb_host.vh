@@ -26,12 +26,20 @@
     end
     endtask
 
+    task usb_host_tx_disable;
+    begin
+      usb_host_tx_en <= 0'b0;
+      #83328;
+    end
+    endtask
+
     task send_usb_raw_bit;
       input usbp;
       input usbn;
     begin
-        usb_p_rx <= usbp;
-        usb_n_rx <= usbn;
+        usb_host_tx_en <= 1'b1;
+        usb_host_p_tx <= usbp;
+        usb_host_n_tx <= usbn;
         #83328;
     end
     endtask
@@ -61,6 +69,7 @@
       reset = 1;
       send_usb_j();
       reset = 0;
+      usb_host_tx_disable();
     end
     endtask
 
@@ -114,6 +123,7 @@
       send_usb_se0();
       send_usb_se0();
       send_usb_j();
+      usb_host_tx_disable();
       wait_usb_interpacket_delay();
     end
     endtask
@@ -208,8 +218,6 @@
     end
     endtask
 
-
-    
 
     reg [15:0] crc16;
     reg crc16_invert; 
@@ -313,7 +321,7 @@
     
     reg [7:0] sync;
     reg [1:0] eop;
-    reg prev_usb_p_tx;
+    reg prev_usb_host_p_rx;
     integer get_usb_bitstuff_count;
     task get_usb_raw;
       output [1023:0] data;
@@ -325,8 +333,8 @@
 
       // wait for sync
       while (sync != 8'b01010100) begin
-        sync = {sync[6:0], usb_p_tx};
-        prev_usb_p_tx = usb_p_tx; 
+        sync = {sync[6:0], usb_host_p_rx};
+        prev_usb_host_p_rx = usb_host_p_rx; 
         #83328;
       end
 
@@ -334,19 +342,19 @@
 
       // get data
       while (eop != 2'b00) begin
-        eop = {usb_p_tx, usb_n_tx};
+        eop = {usb_host_p_rx, usb_host_n_rx};
 
         if (eop == 2'b00) begin
           // do not save se0 data
 
         end else if (get_usb_bitstuff_count == 6) begin
           // expect bitstuff
-          `assert_true("one '0' must follow six '1's", usb_p_tx != prev_usb_p_tx);
+          `assert_true("one '0' must follow six '1's", usb_host_p_rx != prev_usb_host_p_rx);
           get_usb_bitstuff_count = 0;
         end else begin
           // regular data bit
           length = length + 1;
-          if (usb_p_tx == prev_usb_p_tx) begin
+          if (usb_host_p_rx == prev_usb_host_p_rx) begin
             data = {1'b1, data[1023:1]};
             get_usb_bitstuff_count = get_usb_bitstuff_count + 1;
           end else begin
@@ -355,14 +363,14 @@
           end
         end
 
-        prev_usb_p_tx = usb_p_tx;
+        prev_usb_host_p_rx = usb_host_p_rx;
 
         #83328;
       end
 
       // se0 initiates end of packet, must be two bit-lengths according to
       // the USB2 spec
-      `assert_true("eop must have two se0 bits", usb_p_tx == 1'b0 && usb_n_tx == 1'b0);
+      `assert_true("eop must have two se0 bits", usb_host_p_rx == 1'b0 && usb_host_n_rx == 1'b0);
 
       // shift the data down to the bottom so the first bit is data[0]
       data = data >> (1024 - length);

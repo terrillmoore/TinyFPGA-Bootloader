@@ -35,16 +35,28 @@ module top_tb;
       end
     end
 
-    // usb interface
+    // usb interface to FPGA
     wire usb_p_tx_raw;
     wire usb_n_tx_raw;
-    reg usb_p_rx = 1'b1;
-    reg usb_n_rx = 1'b0;
     wire usb_tx_en;
 
-    
     wire usb_p_tx = usb_tx_en ? usb_p_tx_raw : 1'b1;
     wire usb_n_tx = usb_tx_en ? usb_n_tx_raw : 1'b0;
+
+    // usb interface to host
+    reg usb_host_p_tx = 1'b1;
+    reg usb_host_n_tx = 1'b0;
+    wire usb_host_p_rx;
+    wire usb_host_n_rx;
+    reg usb_host_tx_en = 1'b0;
+
+    assign usb_host_p_rx = usb_p_tx;
+    assign usb_host_n_rx = usb_n_tx;
+
+    wire usb_p_rx;
+    wire usb_n_rx;
+    assign usb_p_rx = usb_host_tx_en ?  usb_host_p_tx : 1'b1;
+    assign usb_n_rx = usb_host_tx_en ?  usb_host_n_tx : 1'b0;
 
     // user interface
     wire led;
