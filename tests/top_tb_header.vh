@@ -40,23 +40,34 @@ module top_tb;
     wire usb_n_tx_raw;
     wire usb_tx_en;
 
-    wire usb_p_tx = usb_tx_en ? usb_p_tx_raw : 1'b1;
-    wire usb_n_tx = usb_tx_en ? usb_n_tx_raw : 1'b0;
+    // the top-level USB
+    wire usb_p_top;
+    wire usb_n_top;
+
+    // put bus into default state
+    assign	(pull1, pull0)	usb_p_top = 1'b1;
+    assign	(pull1, pull0)	usb_n_top = 1'b0;
+
+    // the FPGA's output driver
+    assign usb_p_top = usb_tx_en ? usb_p_tx_raw : 1'bz;
+    assign usb_n_top = usb_tx_en ? usb_n_tx_raw : 1'bz;
+    wire usb_p_rx;
+    wire usb_n_rx;
+    assign usb_p_rx = usb_p_top;
+    assign usb_n_rx = usb_n_top;
 
     // usb interface to host
     reg usb_host_p_tx = 1'b1;
     reg usb_host_n_tx = 1'b0;
+    reg usb_host_tx_en = 1'b0;
     wire usb_host_p_rx;
     wire usb_host_n_rx;
-    reg usb_host_tx_en = 1'b0;
 
-    assign usb_host_p_rx = usb_p_tx;
-    assign usb_host_n_rx = usb_n_tx;
+    assign usb_host_p_rx = usb_p_top;
+    assign usb_host_n_rx = usb_n_top;
 
-    wire usb_p_rx;
-    wire usb_n_rx;
-    assign usb_p_rx = usb_host_tx_en ?  usb_host_p_tx : 1'b1;
-    assign usb_n_rx = usb_host_tx_en ?  usb_host_n_tx : 1'b0;
+    assign usb_p_top = usb_host_tx_en ?  usb_host_p_tx : 1'bz;
+    assign usb_n_top = usb_host_tx_en ?  usb_host_n_tx : 1'bz;
 
     // user interface
     wire led;
