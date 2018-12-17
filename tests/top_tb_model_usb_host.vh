@@ -327,11 +327,12 @@
       output [10:0] length;
     begin
       length = 0;
-      sync = 0;
+      sync = 8'b111;
       eop = 2'b10;
 
-      // wait for sync
-      while (sync != 8'b01010100) begin
+      // wait for sync. look for a j followed
+      // by two k's
+      while (sync[2:0] != 3'b100) begin
         sync = {sync[6:0], usb_host_p_rx};
         prev_usb_host_p_rx = usb_host_p_rx; 
         #83328;
