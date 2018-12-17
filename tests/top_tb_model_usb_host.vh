@@ -61,6 +61,8 @@
     end
     endtask
     
+    // TODO(tmm@mcci.com): the core needs to detect USB reset!
+    // Do not assert reset here.
     task send_usb_port_reset;
     begin
       send_usb_se0();
