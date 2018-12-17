@@ -493,6 +493,5 @@
       input [7:0] new_addr;
     begin
       send_usb_ctrl_xfer(old_addr, {8'h00, 8'h00, 8'h00, 8'h00, 8'h00, new_addr, 8'h05, 8'h00});
-      `assert("new device address", dut.dev_addr, 7'h1e);
     end
     endtask
