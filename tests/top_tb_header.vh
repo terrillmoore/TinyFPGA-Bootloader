@@ -35,11 +35,6 @@ module top_tb;
       end
     end
 
-    // usb interface to FPGA
-    wire usb_p_tx_raw;
-    wire usb_n_tx_raw;
-    wire usb_tx_en;
-
     // the top-level USB
     wire usb_p_top;
     wire usb_n_top;
@@ -104,6 +99,11 @@ module top_tb;
 
 `else
 `define DUT tinyfgpa_bootloader_inst
+
+    // usb interface to FPGA
+    wire usb_p_tx_raw;
+    wire usb_n_tx_raw;
+    wire usb_tx_en;
 
     // the FPGA's output driver
     assign usb_p_top = usb_tx_en ? usb_p_tx_raw : 1'bz;
