@@ -13,6 +13,19 @@ Author:
 
 */
 
+//================================================================================
+// configuration parameters
+//================================================================================
+
+// if defined, design relies on external 12 MHz oscillator
+`define EXTCLOCK
+
+// if defined, design is being built for the test bench.
+//`define TEST_BENCH
+
+//================================================================================
+// The top level module
+//================================================================================
 module bootloader (
   input  pin_clk12,
 
@@ -89,11 +102,28 @@ module bootloader (
     //.GLOBAL_BUFFER_OUTPUT(clk_12MHz)
   );
 
-`define EXTCLOCK
 `ifdef EXTCLOCK
   assign clk_12MHz_effective = clk_12MHz;
 `else
   assign clk_12MHz_effective = clk_hfosc;
+`endif
+
+// when compiling for the test bench, we assert PLL
+// reset to 0 for 1 us at statup.
+  reg pll_reset_n = 1;
+
+`ifdef TEST_BENCH
+  reg [4:0] pll_reset_ctr = 5'b0000;
+  always @(posedge clk_12MHz_effective) begin
+    // count up to 31
+    if (&pll_reset_ctr == 1'b0)
+      pll_reset_ctr <= pll_reset_ctr + 5'b0001;
+
+    if (pll_reset_ctr >= 5'd4 && pll_reset_ctr < 5'd20)
+      pll_reset_n <= 1'b0;
+    else
+      pll_reset_n <= 1'b1;
+  end
 `endif
 
   SB_PLL40_CORE #(
@@ -118,7 +148,11 @@ module bootloader (
     .PLLOUTGLOBAL(clk_48mhz),
     .EXTFEEDBACK(),
     .DYNAMICDELAY(),
+`ifdef TEST_BENCH
+    .RESETB(pll_reset_n),
+`else
     .RESETB(1'b1),
+`endif
     .BYPASS(1'b0),
     .LATCHINPUTVALUE(),
     .LOCK(),
