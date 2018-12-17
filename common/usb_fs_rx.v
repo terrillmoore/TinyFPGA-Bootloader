@@ -79,6 +79,15 @@ module usb_fs_rx (
 
   wire [1:0] dpair = dpair_q[3:2];
 
+  // TODO(tmm@mcci.com) SE0 > 2.5 us is USB Reset, which needs
+  // to propagate instead of the 'reset' signal.  2.5 us is 30 clocks
+  // so we can use a 5-bit counter.
+  //
+  // TODO(tmm@mcci.com) static J after EOP for 18 bit times
+  // must trigger a timeout. This is the right place to detect it. 
+  // It may be triggered after 16. (7.1.19.1). We can probably use the
+  // same counter for reset and IPG detect. 
+
   always @(posedge clk) begin
       case (line_state)
           // if we are in a transition state, then we can sample the pair and 
