@@ -48,14 +48,6 @@ module top_tb;
     assign	(pull1, pull0)	usb_p_top = 1'b1;
     assign	(pull1, pull0)	usb_n_top = 1'b0;
 
-    // the FPGA's output driver
-    assign usb_p_top = usb_tx_en ? usb_p_tx_raw : 1'bz;
-    assign usb_n_top = usb_tx_en ? usb_n_tx_raw : 1'bz;
-    wire usb_p_rx;
-    wire usb_n_rx;
-    assign usb_p_rx = usb_tx_en ? 1'b1 : usb_p_top;
-    assign usb_n_rx = usb_tx_en ? 1'b0 : usb_n_top;
-
     // usb interface to host
     reg usb_host_p_tx = 1'b1;
     reg usb_host_n_tx = 1'b0;
@@ -81,7 +73,48 @@ module top_tb;
     // boot interface
     wire boot;
 
-    tinyfpga_bootloader dut (
+`define CATENA4710
+
+`ifdef CATENA4710
+  wire clk_12MHz;
+  reg [1:0] clk12_div = 0;
+  always @(posedge clk_48mhz) begin
+    clk12_div <= clk12_div + 2'b01;
+  end
+
+  assign clk_12MHz = clk12_div[1];
+
+`define DUT bootloader_inst.tinyfpga_bootloader_inst
+
+  wire [6 : 0] gpio;
+  wire [32 : 0] wire_d;
+
+  bootloader bootloader_inst (
+    .pin_gpio(gpio),
+    .wire_D(wire_d),
+    .pin_usbp(usb_p_top),
+    .pin_SPI_SCK(spi_sck),
+    .pin_usbn(usb_n_top),
+    .pin_SPI_SS(spi_cs),
+    .pin_SPI_SO(spi_mosi),
+    .pin_led(led),
+    .pin_clk12(clk_12MHz),
+    .pin_SPI_SI(spi_miso)
+  );
+
+`else
+`define DUT tinyfgpa_bootloader_inst
+
+    // the FPGA's output driver
+    assign usb_p_top = usb_tx_en ? usb_p_tx_raw : 1'bz;
+    assign usb_n_top = usb_tx_en ? usb_n_tx_raw : 1'bz;
+    wire usb_p_rx;
+    wire usb_n_rx;
+    assign usb_p_rx = usb_tx_en ? 1'b1 : usb_p_top;
+    assign usb_n_rx = usb_tx_en ? 1'b0 : usb_n_top;
+
+
+    tinyfpga_bootloader tinyfgpa_bootloader_inst (
       .clk_48mhz(clk_48mhz),
       .reset(reset),
 
@@ -102,6 +135,7 @@ module top_tb;
 
       .boot(boot)
     );
+`endif
 
 `include "top_tb_model_spi.vh"
 
