@@ -193,6 +193,9 @@ module bootloader (
   assign usb_n_rx = usb_tx_en ? 1'b0 : pin_usbn;
 */
 
+  wire usb_p_rx_raw;
+  wire usb_n_rx_raw;
+
   SB_IO #(
     .PIN_TYPE( { IOB_PIN_OUTPUT_TRISTATE, IOB_PIN_INPUT_REGISTERED } ),
     .PULLUP(1'b 0)
@@ -203,7 +206,7 @@ module bootloader (
     .INPUT_CLK(clk_48mhz),
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_p_tx),
-    .D_IN_0(usb_p_rx)
+    .D_IN_0(usb_p_rx_raw)
   );
 
   SB_IO #(
@@ -216,8 +219,13 @@ module bootloader (
     .INPUT_CLK(clk_48mhz),
     .OUTPUT_ENABLE(usb_tx_en),
     .D_OUT_0(usb_n_tx),
-    .D_IN_0(usb_n_rx)
+    .D_IN_0(usb_n_rx_raw)
   );
+
+  assign usb_p_rx = usb_tx_en ? 1'b1 : usb_p_rx_raw;
+  assign usb_n_rx = usb_tx_en ? 1'b0 : usb_n_rx_raw;
+
+
   assign reset = 1'b0;
 
 /* other things for us */
